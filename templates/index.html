@@ -1,0 +1,1878 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LASE EV</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Chart.js CDN for visual analytics -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+
+    <!-- 1. Splash Screen -->
+    <div id="splash-screen" onclick="enterApp()">
+        <div class="splash-content">
+            <div class="splash-title">LASE EV</div>
+            <div class="splash-sub">Leading Analytics for Smart Electric EV</div>
+            <div class="splash-hint">
+                <span>👉 Tap To Enter</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. Universal Navigation Bar -->
+    <nav class="app-navbar" id="app-navbar" style="display: none;">
+        <div class="nav-logo" onclick="navToHome()">
+            <span class="icon">⚡</span>
+            <span>LASE EV</span>
+        </div>
+
+        <!-- Guest Mode Actions -->
+        <div class="nav-actions" id="nav-guest-actions">
+            <button class="btn-nav-login" onclick="openModal('login')">Login</button>
+            <button class="btn-nav-signup" onclick="openModal('register')">Sign Up</button>
+        </div>
+
+        <!-- Theme Toggler & Logged In Actions -->
+        <div class="dash-nav-actions" id="nav-auth-actions" style="display: none;">
+            <button class="theme-toggle-btn" id="theme-toggle-btn" onclick="toggleTheme()"
+                title="Toggle Light/Dark Theme">
+                <i data-lucide="sun" id="theme-icon-sun"></i>
+                <i data-lucide="moon" id="theme-icon-moon" style="display: none;"></i>
+                <span id="theme-toggle-label">Dark Theme</span>
+            </button>
+            <button class="dash-nav-btn active" id="btn-nav-home" onclick="navToHome()">
+                <i data-lucide="home"></i> Home
+            </button>
+            <button class="dash-nav-btn" id="btn-nav-dash" onclick="navToDashboard()">
+                <i data-lucide="layout-dashboard"></i> Dashboard
+            </button>
+            <div class="user-pill">
+                <i data-lucide="user"></i>
+                <span id="user-email-display">user@example.com</span>
+                <span class="user-name-sub" id="user-name-display">(User)</span>
+            </div>
+            <button class="dash-signout-btn" onclick="handleLogout()">
+                <i data-lucide="log-out"></i> Sign Out
+            </button>
+        </div>
+    </nav>
+
+    <!-- 3. Landing Hero Page View -->
+    <main id="home-view" class="view-section" style="display: none;">
+        <section class="hero-section">
+            <h1 class="hero-title animate-pop">LASE EV</h1>
+            <h2 class="hero-subtitle">Leading Analytics for Smart Electric EV</h2>
+            <p class="hero-desc">
+                Connected intelligence for fleet administrators and EV drivers. Track vehicle telemetry, garage
+                maintenance,
+                driver safety scores, and revenue performance in real time.
+            </p>
+            <button class="btn-get-started pulse-btn" id="hero-action-btn" onclick="handleHeroAction()">
+                <span>Get Started</span>
+                <i data-lucide="arrow-right"></i>
+            </button>
+        </section>
+    </main>
+
+    <!-- 4. Authenticated Dashboard Layout -->
+    <main id="dashboard-view" class="view-section" style="display: none;">
+        <div class="app-dashboard-layout">
+
+            <!-- Left Sidebar Navigation -->
+            <aside class="dash-sidebar">
+                <div class="sidebar-brand">
+                    <div class="brand-icon-box"><i data-lucide="zap"></i></div>
+                    <div class="brand-titles">
+                        <span class="main-brand" id="sidebar-role-title">EV Fleet</span>
+                        <span class="sub-brand" id="sidebar-role-subtitle">Analytics Console</span>
+                    </div>
+                </div>
+
+                <!-- ADMIN Sidebar Menu -->
+                <ul class="sidebar-menu" id="admin-sidebar-menu">
+                    <li class="menu-item active" id="nav-item-admin-overview"
+                        onclick="switchDashboardTab('admin-overview')">
+                        <i data-lucide="layout-dashboard"></i> <span>Overview</span>
+                    </li>
+                    <li class="menu-item menu-item-powerbi" id="nav-item-admin-powerbi"
+                        onclick="switchDashboardTab('admin-powerbi')">
+                        <i data-lucide="bar-chart-3"></i> <span>Executive Analytics</span>
+                        <span class="pbi-tag">Analytics</span>
+                    </li>
+                    <li class="menu-item menu-item-lase" id="nav-item-admin-lase-analysis"
+                        onclick="switchDashboardTab('admin-lase-analysis')">
+                        <i data-lucide="activity"></i> <span>Lase Analysis</span>
+                        <span class="lase-tag">Deep Insights</span>
+                    </li>
+                    <li class="menu-item menu-item-assistant" id="nav-item-admin-lase-assistant"
+                        onclick="switchDashboardTab('admin-lase-assistant')">
+                        <i data-lucide="bot"></i> <span>LASE Assistance</span>
+                        <span class="lase-tag"
+                            style="background: linear-gradient(135deg, #a855f7 0%, #06b6d4 100%);">AI</span>
+                    </li>
+                    <li class="menu-item" id="nav-item-admin-vehicles" onclick="switchDashboardTab('admin-vehicles')">
+                        <i data-lucide="truck"></i> <span>Vehicles (50)</span>
+                    </li>
+                    <li class="menu-item" id="nav-item-admin-drivers" onclick="switchDashboardTab('admin-drivers')">
+                        <i data-lucide="users"></i> <span>Drivers (50)</span>
+                    </li>
+                    <li class="menu-item" id="nav-item-admin-trips" onclick="switchDashboardTab('admin-trips')">
+                        <i data-lucide="route"></i> <span>Trips</span>
+                    </li>
+                    <li class="menu-item" id="nav-item-admin-maintenance"
+                        onclick="switchDashboardTab('admin-maintenance')">
+                        <i data-lucide="wrench"></i> <span>Maintenance</span>
+                    </li>
+                    <li class="menu-item" id="nav-item-admin-alerts" onclick="switchDashboardTab('admin-alerts')">
+                        <i data-lucide="bell"></i> <span>Alerts</span>
+                    </li>
+                    <li class="menu-item" id="nav-item-admin-revenue" onclick="switchDashboardTab('admin-revenue')">
+                        <i data-lucide="dollar-sign"></i> <span>Revenue</span>
+                    </li>
+                    <li class="menu-item" id="nav-item-admin-analytics" onclick="switchDashboardTab('admin-analytics')">
+                        <i data-lucide="pie-chart"></i> <span>Fleet Analytics</span>
+                    </li>
+                </ul>
+
+                <!-- DRIVER Sidebar Menu -->
+                <ul class="sidebar-menu" id="driver-sidebar-menu" style="display: none;">
+                    <li class="menu-item active" id="nav-item-driver-profile"
+                        onclick="switchDashboardTab('driver-profile')">
+                        <i data-lucide="user"></i> <span>My Profile</span>
+                    </li>
+                    <li class="menu-item" id="nav-item-driver-vehicle" onclick="switchDashboardTab('driver-vehicle')">
+                        <i data-lucide="truck"></i> <span>My Vehicle</span>
+                    </li>
+                    <li class="menu-item" id="nav-item-driver-predict" onclick="switchDashboardTab('driver-predict')">
+                        <i data-lucide="zap"></i> <span>ML Range Predictor</span>
+                    </li>
+                    <li class="menu-item" id="nav-item-driver-trips" onclick="switchDashboardTab('driver-trips')">
+                        <i data-lucide="navigation"></i> <span>My Trips</span>
+                    </li>
+                    <li class="menu-item" id="nav-item-driver-maint" onclick="switchDashboardTab('driver-maint')">
+                        <i data-lucide="wrench"></i> <span>Maintenance</span>
+                    </li>
+                    <li class="menu-item" id="nav-item-driver-revenue" onclick="switchDashboardTab('driver-revenue')">
+                        <i data-lucide="dollar-sign"></i> <span>My Earnings</span>
+                    </li>
+                </ul>
+
+                <div class="sidebar-footer">
+                    <div class="system-status-indicator">
+                        <span class="status-dot-green"></span>
+                        <span>Telemetry Active</span>
+                    </div>
+                    <button class="sidebar-logout-btn" onclick="handleLogout()">
+                        <i data-lucide="log-out"></i> Logout
+                    </button>
+                </div>
+            </aside>
+
+            <!-- Main Dashboard Body Area -->
+            <div class="dash-main-area">
+
+                <!-- Top Header Bar -->
+                <header class="dash-top-header">
+                    <div class="header-titles">
+                        <span class="meta-tag" id="page-meta-tag">EV FLEET INTELLIGENCE</span>
+                        <h1 class="page-title" id="page-title-text">Fleet Dashboard Overview</h1>
+                    </div>
+                    <div class="header-user-profile">
+                        <div class="avatar-circle" id="user-avatar-initial">A</div>
+                        <div class="user-info-text">
+                            <span class="user-display-name" id="profile-display-name">Fleet Administrator</span>
+                            <span class="user-display-role" id="profile-display-role">ADMIN</span>
+                        </div>
+                    </div>
+                </header>
+
+                <!-- Scrollable Workspace -->
+                <div class="dash-workspace">
+
+                    <!-- Welcome Banner -->
+                    <div class="green-hero-banner">
+                        <div class="banner-left-info">
+                            <div class="live-pill"><span class="dot-white"></span> Live Telemetry Connected</div>
+                            <h2 class="welcome-heading">Welcome back, <span id="banner-user-name">Administrator</span>
+                            </h2>
+                            <p class="welcome-desc" id="banner-user-desc">Real-time status for 50 electric vehicles
+                                across 5 manufacturers.</p>
+                        </div>
+                    </div>
+
+                    <!-- Dynamic Tab Views Container -->
+                    <div class="tab-content-area" id="tab-content-area">
+
+                        <!-- ==================== ADMIN TAB: EXECUTIVE ANALYTICS ==================== -->
+                        <div id="tab-view-admin-powerbi" class="tab-pane" style="display: none;">
+                            <div class="powerbi-container">
+                                <!-- Executive Analytics Top Bar -->
+                                <div class="powerbi-topbar">
+                                    <div class="pbi-title-box">
+                                        <div class="pbi-logo"><i data-lucide="bar-chart-3"></i></div>
+                                        <div>
+                                            <h2 class="pbi-main-heading">Executive Analytics Report</h2>
+                                            <p class="pbi-sub-heading">Real-Time EV Fleet Intelligence & Financial
+                                                Performance Matrix</p>
+                                        </div>
+                                    </div>
+                                    <div class="pbi-actions">
+                                        <button class="pbi-btn pbi-btn-secondary" onclick="resetPowerBIFilters()">
+                                            <i data-lucide="refresh-cw"></i> Reset Slicers
+                                        </button>
+                                        <button class="pbi-btn pbi-btn-primary" onclick="exportPowerBIReport()">
+                                            <i data-lucide="download"></i> Export Analytics Report
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <!-- Executive Analytics Slicers Filter Toolbar -->
+                                <div class="powerbi-slicers-bar">
+                                    <div class="slicer-item">
+                                        <label><i data-lucide="filter"></i> Manufacturer Slicer</label>
+                                        <select id="pbi-slicer-mfr" onchange="updatePowerBIReport()" class="pbi-select">
+                                            <option value="ALL">All Manufacturers (5)</option>
+                                            <option value="Tata">Tata Motors</option>
+                                            <option value="MG">MG Motor</option>
+                                            <option value="Hyundai">Hyundai EV</option>
+                                            <option value="Mahindra">Mahindra Electric</option>
+                                            <option value="Maruti">Maruti Suzuki EV</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="slicer-item">
+                                        <label><i data-lucide="truck"></i> Fleet Status Slicer</label>
+                                        <select id="pbi-slicer-status" onchange="updatePowerBIReport()"
+                                            class="pbi-select">
+                                            <option value="ALL">All Vehicle Statuses</option>
+                                            <option value="Running">Running / Active</option>
+                                            <option value="Charging">Charging</option>
+                                            <option value="In Garage">In Garage / Service</option>
+                                            <option value="Parked">Parked / Idle</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="slicer-item">
+                                        <label><i data-lucide="shield"></i> Driver Safety & Risk Slicer</label>
+                                        <select id="pbi-slicer-behavior" onchange="updatePowerBIReport()"
+                                            class="pbi-select">
+                                            <option value="ALL">All Driving Behaviors</option>
+                                            <option value="Safe">Safe Drivers (Score >= 85)</option>
+                                            <option value="Normal">Normal Driving (Score 70-84)</option>
+                                            <option value="Moderate">Moderate Risk (Score 60-69)</option>
+                                            <option value="Aggressive">Aggressive / High Risk (Score < 60)</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="slicer-item pbi-status-indicator">
+                                        <span class="pbi-live-dot"></span>
+                                        <span>Live Analytics Telemetry Active</span>
+                                    </div>
+                                </div>
+
+                                <!-- Power BI Executive KPI Cards -->
+                                <div class="pbi-kpi-grid">
+                                    <div class="pbi-kpi-card gold-border">
+                                        <div class="pbi-kpi-header">
+                                            <span>Gross Revenue</span>
+                                            <span class="pbi-badge-green">+14.2% YoY</span>
+                                        </div>
+                                        <div class="pbi-kpi-value" id="pbi-kpi-revenue">₹13.55M</div>
+                                        <div class="pbi-kpi-sub">Total fare revenue collected</div>
+                                    </div>
+
+                                    <div class="pbi-kpi-card emerald-border">
+                                        <div class="pbi-kpi-header">
+                                            <span>Fleet Net Profit</span>
+                                            <span class="pbi-badge-cyan">53.5% Margin</span>
+                                        </div>
+                                        <div class="pbi-kpi-value" id="pbi-kpi-profit">₹7.25M</div>
+                                        <div class="pbi-kpi-sub">Net operating earnings</div>
+                                    </div>
+
+                                    <div class="pbi-kpi-card blue-border">
+                                        <div class="pbi-kpi-header">
+                                            <span>Fleet Distance</span>
+                                            <span class="pbi-badge-blue">245.8K km</span>
+                                        </div>
+                                        <div class="pbi-kpi-value" id="pbi-kpi-distance">245,800 km</div>
+                                        <div class="pbi-kpi-sub">Cumulative trip mileage</div>
+                                    </div>
+
+                                    <div class="pbi-kpi-card purple-border">
+                                        <div class="pbi-kpi-header">
+                                            <span>Active Fleet Efficiency</span>
+                                            <span class="pbi-badge-purple">94.2% Rate</span>
+                                        </div>
+                                        <div class="pbi-kpi-value" id="pbi-kpi-efficiency">94.2%</div>
+                                        <div class="pbi-kpi-sub">Operational uptime status</div>
+                                    </div>
+
+                                    <div class="pbi-kpi-card amber-border">
+                                        <div class="pbi-kpi-header">
+                                            <span>Driver Safety Index</span>
+                                            <span class="pbi-badge-amber">88.5 / 100</span>
+                                        </div>
+                                        <div class="pbi-kpi-value" id="pbi-kpi-safety">88.5</div>
+                                        <div class="pbi-kpi-sub">Fleet telematics safety score</div>
+                                    </div>
+                                </div>
+
+                                <!-- Power BI Visualizations Grid (6 Charts) -->
+                                <div class="pbi-charts-grid">
+                                    <div class="pbi-chart-card">
+                                        <div class="pbi-chart-title">
+                                            <i data-lucide="trending-up"></i>
+                                            <div>
+                                                <h3>Financial Trend Analysis</h3>
+                                                <p>Revenue & Net Profit Quarterly Growth</p>
+                                            </div>
+                                        </div>
+                                        <div class="pbi-chart-canvas-box">
+                                            <canvas id="pbiChartQuarterlyCanvas"></canvas>
+                                        </div>
+                                    </div>
+
+                                    <div class="pbi-chart-card">
+                                        <div class="pbi-chart-title">
+                                            <i data-lucide="layers"></i>
+                                            <div>
+                                                <h3>OEM Financial Matrix</h3>
+                                                <p>Gross Revenue vs. Maintenance Expense per OEM</p>
+                                            </div>
+                                        </div>
+                                        <div class="pbi-chart-canvas-box">
+                                            <canvas id="pbiChartMfrCompCanvas"></canvas>
+                                        </div>
+                                    </div>
+
+                                    <div class="pbi-chart-card">
+                                        <div class="pbi-chart-title">
+                                            <i data-lucide="pie-chart"></i>
+                                            <div>
+                                                <h3>Operational Fleet Breakdown</h3>
+                                                <p>Live Telematics Vehicle Status Distribution</p>
+                                            </div>
+                                        </div>
+                                        <div class="pbi-chart-canvas-box">
+                                            <canvas id="pbiChartStatusCanvas"></canvas>
+                                        </div>
+                                    </div>
+
+                                    <div class="pbi-chart-card">
+                                        <div class="pbi-chart-title">
+                                            <i data-lucide="award"></i>
+                                            <div>
+                                                <h3>Top Driver Leaderboard</h3>
+                                                <p>Highest Net Revenue Drivers</p>
+                                            </div>
+                                        </div>
+                                        <div class="pbi-chart-canvas-box">
+                                            <canvas id="pbiChartTopDriversCanvas"></canvas>
+                                        </div>
+                                    </div>
+
+                                    <div class="pbi-chart-card">
+                                        <div class="pbi-chart-title">
+                                            <i data-lucide="cpu"></i>
+                                            <div>
+                                                <h3>EV Model Efficiency Index</h3>
+                                                <p>Energy Consumption (kWh / 100km)</p>
+                                            </div>
+                                        </div>
+                                        <div class="pbi-chart-canvas-box">
+                                            <canvas id="pbiChartEfficiencyCanvas"></canvas>
+                                        </div>
+                                    </div>
+
+                                    <div class="pbi-chart-card">
+                                        <div class="pbi-chart-title">
+                                            <i data-lucide="alert-triangle"></i>
+                                            <div>
+                                                <h3>Driver Safety & Events Matrix</h3>
+                                                <p>Overspeed vs. Harsh Braking Incidents</p>
+                                            </div>
+                                        </div>
+                                        <div class="pbi-chart-canvas-box">
+                                            <canvas id="pbiChartSafetyCanvas"></canvas>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Power BI Executive Data Matrix Table -->
+                                <div class="panel-card pbi-matrix-panel">
+                                    <div class="panel-header-action">
+                                        <div class="panel-title-text"><i data-lucide="grid"></i> Executive Fleet
+                                            Drilldown Matrix</div>
+                                        <div class="pbi-table-badge">50 EV Data Records</div>
+                                    </div>
+                                    <div class="table-responsive">
+                                        <table class="data-table pbi-data-table">
+                                            <thead>
+                                                <tr>
+                                                    <th>Manufacturer</th>
+                                                    <th>Active EVs</th>
+                                                    <th>Gross Revenue (₹)</th>
+                                                    <th>Maintenance Expense (₹)</th>
+                                                    <th>Net Profit (₹)</th>
+                                                    <th>Combined Distance (km)</th>
+                                                    <th>Avg Energy (kWh/100km)</th>
+                                                    <th>Fleet Rating</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="pbi-matrix-table-body">
+                                                <tr>
+                                                    <td colspan="8" class="text-center">Loading Power BI matrix...</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <!-- ==================== ADMIN TAB 1: OVERVIEW ==================== -->
+                        <div id="tab-view-admin-overview" class="tab-pane active">
+                            <!-- 4 KPI Cards -->
+                            <div class="kpi-cards-row">
+                                <div class="kpi-card">
+                                    <span class="kpi-title">Total EVs</span>
+                                    <div class="kpi-value" id="kpi-total-evs">50</div>
+                                    <span class="kpi-subtext">5 EV Manufacturers</span>
+                                </div>
+                                <div class="kpi-card">
+                                    <span class="kpi-title">Running EVs</span>
+                                    <div class="kpi-value text-emerald" id="kpi-running-evs">26</div>
+                                    <span class="kpi-subtext">Active on road</span>
+                                </div>
+                                <div class="kpi-card">
+                                    <span class="kpi-title">In Garage</span>
+                                    <div class="kpi-value text-amber" id="kpi-garage-evs">6</div>
+                                    <span class="kpi-subtext">Maintenance status</span>
+                                </div>
+                                <div class="kpi-card">
+                                    <span class="kpi-title">Currently Charging</span>
+                                    <div class="kpi-value text-cyan" id="kpi-charging-evs">5</div>
+                                    <span class="kpi-subtext">Plugged into chargers</span>
+                                </div>
+                                <div class="kpi-card">
+                                    <span class="kpi-title">Parked / Idle</span>
+                                    <div class="kpi-value text-purple" id="kpi-parked-evs">1</div>
+                                    <span class="kpi-subtext">Stationary / Idle</span>
+                                </div>
+                            </div>
+
+                            <!-- Admin Highlights Cards (Max/Min Revenue, Max/Min Service Cost, Top Driver) -->
+                            <div class="highlights-grid">
+                                <div class="highlight-card bg-glass-emerald">
+                                    <div class="hl-header"><i data-lucide="trending-up"></i> Maximum Revenue Car</div>
+                                    <div class="hl-main-id" id="hl-max-rev-id">EV00019</div>
+                                    <div class="hl-sub" id="hl-max-rev-model">Maruti Suzuki e Vitara</div>
+                                    <div class="hl-val" id="hl-max-rev-val">₹300,417</div>
+                                    <div class="hl-meta" id="hl-max-rev-driver">Driver: Samar Sen</div>
+                                </div>
+
+                                <div class="highlight-card bg-glass-amber">
+                                    <div class="hl-header"><i data-lucide="trending-down"></i> Lowest Revenue Car</div>
+                                    <div class="hl-main-id" id="hl-min-rev-id">EV00023</div>
+                                    <div class="hl-sub" id="hl-min-rev-model">Hyundai IONIQ 5</div>
+                                    <div class="hl-val" id="hl-min-rev-val">₹245,673</div>
+                                    <div class="hl-meta" id="hl-min-rev-driver">Driver: Kavya Menon</div>
+                                </div>
+
+                                <div class="highlight-card bg-glass-rose">
+                                    <div class="hl-header"><i data-lucide="wrench"></i> Max Maintenance Cost Car</div>
+                                    <div class="hl-main-id" id="hl-max-maint-id">EV00019</div>
+                                    <div class="hl-sub" id="hl-max-maint-model">Maruti Suzuki e Vitara</div>
+                                    <div class="hl-val" id="hl-max-maint-val">₹11,169</div>
+                                    <div class="hl-meta">Garage Reason: Frequent Service</div>
+                                </div>
+
+                                <div class="highlight-card bg-glass-blue">
+                                    <div class="hl-header"><i data-lucide="shield-check"></i> Min Maintenance Cost Car
+                                    </div>
+                                    <div class="hl-main-id" id="hl-min-maint-id">EV00023</div>
+                                    <div class="hl-sub" id="hl-min-maint-model">Hyundai IONIQ 5</div>
+                                    <div class="hl-val" id="hl-min-maint-val">₹8,991</div>
+                                    <div class="hl-meta">Optimal Vehicle Health</div>
+                                </div>
+
+                                <div class="highlight-card bg-glass-purple">
+                                    <div class="hl-header"><i data-lucide="award"></i> Top Performing Driver</div>
+                                    <div class="hl-main-id" id="hl-top-driver-name">Samar Sen</div>
+                                    <div class="hl-sub" id="hl-top-driver-id">ID: DR00019</div>
+                                    <div class="hl-val" id="hl-top-driver-val">₹238,333</div>
+                                    <div class="hl-meta" id="hl-top-driver-rating">Rating: 4.9 ★ (Score: 94)</div>
+                                </div>
+                            </div>
+
+                            <!-- Fleet Quick Status Table -->
+                            <div class="panel-card">
+                                <div class="panel-header-action">
+                                    <div class="panel-title-text"><i data-lucide="list"></i> 50 EV Fleet Summary
+                                        Overview</div>
+                                    <div class="table-search-box">
+                                        <i data-lucide="search" class="search-icon"></i>
+                                        <input type="text" id="overview-search-input"
+                                            placeholder="Search vehicle ID, driver, manufacturer..."
+                                            onkeyup="filterTable('overview-search-input', 'admin-overview-table-body')">
+                                    </div>
+                                </div>
+                                <div class="table-responsive">
+                                    <table class="data-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Vehicle ID</th>
+                                                <th>Manufacturer & Model</th>
+                                                <th>Registration</th>
+                                                <th>Driver Name</th>
+                                                <th>Charging Status</th>
+                                                <th>Live Status</th>
+                                                <th>Gross Revenue (₹)</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="admin-overview-table-body">
+                                            <tr>
+                                                <td colspan="7" class="text-center">Loading EV fleet summary...</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- ==================== ADMIN TAB 2: VEHICLES ==================== -->
+                        <div id="tab-view-admin-vehicles" class="tab-pane" style="display: none;">
+                            <div class="panel-card">
+                                <div class="panel-header-action">
+                                    <div class="panel-title-text"><i data-lucide="truck"></i> All 50 Electric Vehicles
+                                        (1 summary row per vehicle)</div>
+                                    <div class="filter-controls">
+                                        <select id="vehicle-company-filter"
+                                            onchange="filterVehiclesByCompany(this.value)" class="select-box">
+                                            <option value="ALL">All Companies (5)</option>
+                                            <option value="Hyundai">Hyundai (10)</option>
+                                            <option value="MG">MG (10)</option>
+                                            <option value="Mahindra">Mahindra (10)</option>
+                                            <option value="Maruti">Maruti (10)</option>
+                                            <option value="Tata">Tata (10)</option>
+                                        </select>
+                                        <div class="table-search-box">
+                                            <i data-lucide="search" class="search-icon"></i>
+                                            <input type="text" id="vehicle-search-input"
+                                                placeholder="Search car ID, reg no..."
+                                                onkeyup="filterTable('vehicle-search-input', 'admin-vehicles-table-body')">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="table-responsive">
+                                    <table class="data-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Vehicle ID</th>
+                                                <th>Manufacturer</th>
+                                                <th>Model</th>
+                                                <th>Vehicle Type</th>
+                                                <th>Registration No.</th>
+                                                <th>Assigned Driver</th>
+                                                <th>Capacity (kWh)</th>
+                                                <th>Charging</th>
+                                                <th>Garage Status</th>
+                                                <th>Revenue (₹)</th>
+                                                <th>Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="admin-vehicles-table-body">
+                                            <tr>
+                                                <td colspan="11" class="text-center">Loading vehicles data...</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- ==================== ADMIN TAB 3: DRIVERS ==================== -->
+                        <div id="tab-view-admin-drivers" class="tab-pane" style="display: none;">
+                            <div class="panel-card">
+                                <div class="panel-header-action">
+                                    <div class="panel-title-text"><i data-lucide="users"></i> Fleet Drivers Directory
+                                        (50 Personnel)</div>
+                                    <div class="table-search-box">
+                                        <i data-lucide="search" class="search-icon"></i>
+                                        <input type="text" id="driver-search-input"
+                                            placeholder="Search driver name, email..."
+                                            onkeyup="filterTable('driver-search-input', 'admin-drivers-table-body')">
+                                    </div>
+                                </div>
+                                <div class="table-responsive">
+                                    <table class="data-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Driver ID</th>
+                                                <th>Driver Name</th>
+                                                <th>Email</th>
+                                                <th>Exp (Yrs)</th>
+                                                <th>Behavior</th>
+                                                <th>Rating</th>
+                                                <th>Safety Score</th>
+                                                <th>Assigned Vehicle</th>
+                                                <th>Total Net Earnings</th>
+                                                <th>Events (Overspeed / Harsh)</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="admin-drivers-table-body">
+                                            <tr>
+                                                <td colspan="10" class="text-center">Loading drivers directory...</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- ==================== ADMIN TAB 4: TRIPS ==================== -->
+                        <div id="tab-view-admin-trips" class="tab-pane" style="display: none;">
+                            <div class="kpi-cards-row">
+                                <div class="kpi-card">
+                                    <span class="kpi-title">Total Trips</span>
+                                    <div class="kpi-value" id="kpi-trips-total">10,000</div>
+                                    <span class="kpi-subtext">200 trips per car</span>
+                                </div>
+                                <div class="kpi-card">
+                                    <span class="kpi-title">Completed Trips</span>
+                                    <div class="kpi-value text-emerald" id="kpi-trips-completed">9,880</div>
+                                    <span class="kpi-subtext">Successfully fulfilled</span>
+                                </div>
+                                <div class="kpi-card">
+                                    <span class="kpi-title">Cancelled Trips</span>
+                                    <div class="kpi-value text-amber" id="kpi-trips-cancelled">120</div>
+                                    <span class="kpi-subtext">Customer / System cancel</span>
+                                </div>
+                                <div class="kpi-card">
+                                    <span class="kpi-title">Total Fleet Distance</span>
+                                    <div class="kpi-value text-cyan" id="kpi-trips-distance">245,800 km</div>
+                                    <span class="kpi-subtext">Combined odometer distance</span>
+                                </div>
+                            </div>
+
+                            <div class="panel-card">
+                                <div class="panel-header-action">
+                                    <div class="panel-title-text"><i data-lucide="route"></i> Master Trips History</div>
+                                    <div class="table-search-box">
+                                        <i data-lucide="search" class="search-icon"></i>
+                                        <input type="text" id="trips-search-input"
+                                            placeholder="Search trip ID, driver, date..."
+                                            onkeyup="filterTable('trips-search-input', 'admin-trips-table-body')">
+                                    </div>
+                                </div>
+                                <div class="table-responsive">
+                                    <table class="data-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Trip ID</th>
+                                                <th>Date</th>
+                                                <th>Vehicle ID</th>
+                                                <th>Driver Name</th>
+                                                <th>Distance (km)</th>
+                                                <th>Avg Speed</th>
+                                                <th>Trip Status</th>
+                                                <th>Gross Revenue</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="admin-trips-table-body">
+                                            <tr>
+                                                <td colspan="8" class="text-center">Loading master trips...</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+
+
+                        <!-- ==================== ADMIN TAB 7: MAINTENANCE ==================== -->
+                        <div id="tab-view-admin-maintenance" class="tab-pane" style="display: none;">
+                            <div class="panel-card">
+                                <div class="panel-header"><i data-lucide="wrench"></i> Garage & Maintenance Details (All
+                                    Vehicles)</div>
+                                <div class="table-responsive">
+                                    <table class="data-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Vehicle ID</th>
+                                                <th>Driver Name</th>
+                                                <th>Registration No.</th>
+                                                <th>In Garage Status</th>
+                                                <th>Maintenance Type</th>
+                                                <th>Maintenance Date</th>
+                                                <th>Last Maintenance Date</th>
+                                                <th>Next Maintenance Date</th>
+                                                <th>Total Maintenance Cost (₹)</th>
+                                                <th>Maintenance Status</th>
+                                                <th>Frequency</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="admin-maintenance-table-body">
+                                            <tr>
+                                                <td colspan="11" class="text-center">Loading maintenance details...</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- ==================== ADMIN TAB 8: ALERTS ==================== -->
+                        <div id="tab-view-admin-alerts" class="tab-pane" style="display: none;">
+                            <div class="panel-card">
+                                <div class="panel-header"><i data-lucide="bell"></i> System Telematics & Safety Alerts
+                                </div>
+                                <div class="table-responsive">
+                                    <table class="data-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Alert ID</th>
+                                                <th>Alert Type</th>
+                                                <th>Vehicle ID</th>
+                                                <th>Driver Name</th>
+                                                <th>Timestamp / Created At</th>
+                                                <th>Severity Level</th>
+                                                <th>Alert Status</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="admin-alerts-table-body">
+                                            <tr>
+                                                <td colspan="7" class="text-center">Loading system alerts...</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- ==================== ADMIN TAB 9: REVENUE ==================== -->
+                        <div id="tab-view-admin-revenue" class="tab-pane" style="display: none;">
+                            <div class="kpi-cards-row">
+                                <div class="kpi-card">
+                                    <span class="kpi-title">Gross Revenue</span>
+                                    <div class="kpi-value text-emerald" id="rev-gross-val">₹13,557,611</div>
+                                    <span class="kpi-subtext">Total fare collected</span>
+                                </div>
+                                <div class="kpi-card">
+                                    <span class="kpi-title">Net Revenue</span>
+                                    <div class="kpi-value text-blue" id="rev-net-val">₹10,846,088</div>
+                                    <span class="kpi-subtext">After commissions</span>
+                                </div>
+                                <div class="kpi-card">
+                                    <span class="kpi-title">Fleet Net Profit</span>
+                                    <div class="kpi-value text-purple" id="rev-profit-val">₹7,250,400</div>
+                                    <span class="kpi-subtext">Net operating profit</span>
+                                </div>
+                                <div class="kpi-card">
+                                    <span class="kpi-title">Total Maintenance Cost</span>
+                                    <div class="kpi-value text-rose" id="rev-maint-val">₹495,200</div>
+                                    <span class="kpi-subtext">Total service expenses</span>
+                                </div>
+                            </div>
+
+                            <div class="panel-card">
+                                <div class="panel-header"><i data-lucide="dollar-sign"></i> Company-wise Revenue
+                                    Breakdown</div>
+                                <div class="table-responsive">
+                                    <table class="data-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Company / Manufacturer</th>
+                                                <th>Total Cars</th>
+                                                <th>Gross Revenue (₹)</th>
+                                                <th>Average Revenue per Car (₹)</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="admin-revenue-company-body">
+                                            <tr>
+                                                <td colspan="4" class="text-center">Loading revenue breakdown...</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- ==================== ADMIN TAB 10: FLEET ANALYTICS (CHARTS) ==================== -->
+                        <div id="tab-view-admin-analytics" class="tab-pane" style="display: none;">
+                            <div class="analytics-charts-grid">
+
+                                <!-- Chart 1: Company Revenue Performance -->
+                                <div class="chart-card">
+                                    <div class="chart-card-header">
+                                        <h3>Revenue Performance by Company</h3>
+                                        <p>Total Gross Revenue across EV Manufacturers</p>
+                                    </div>
+                                    <div class="chart-box">
+                                        <canvas id="companyRevenueChartCanvas"></canvas>
+                                    </div>
+                                </div>
+
+                                <!-- Chart 2: Top Performing Drivers -->
+                                <div class="chart-card">
+                                    <div class="chart-card-header">
+                                        <h3>Top Performing Drivers</h3>
+                                        <p>Drivers with Highest Net Revenue Generation</p>
+                                    </div>
+                                    <div class="chart-box">
+                                        <canvas id="topDriversChartCanvas"></canvas>
+                                    </div>
+                                </div>
+
+                                <!-- Chart 3: Driving Behavior Distribution -->
+                                <div class="chart-card">
+                                    <div class="chart-card-header">
+                                        <h3>Driving Behavior Analysis</h3>
+                                        <p>Safe, Normal, Moderate & Aggressive Classification</p>
+                                    </div>
+                                    <div class="chart-box">
+                                        <canvas id="behaviorChartCanvas"></canvas>
+                                    </div>
+                                </div>
+
+                                <!-- Chart 4: Top EV Models Performance -->
+                                <div class="chart-card">
+                                    <div class="chart-card-header">
+                                        <h3>Top Performing EV Models</h3>
+                                        <p>Model Performance by Gross Revenue</p>
+                                    </div>
+                                    <div class="chart-box">
+                                        <canvas id="evModelChartCanvas"></canvas>
+                                    </div>
+                                </div>
+
+                                <!-- Chart 5: Harsh Braking Events by Drivers -->
+                                <div class="chart-card">
+                                    <div class="chart-card-header">
+                                        <h3>Harsh Braking Event Analysis</h3>
+                                        <p>Drivers with Frequent Harsh Braking Incidents</p>
+                                    </div>
+                                    <div class="chart-box">
+                                        <canvas id="harshBrakingChartCanvas"></canvas>
+                                    </div>
+                                </div>
+
+                                <!-- Chart 6: Overspeed Events by Drivers -->
+                                <div class="chart-card">
+                                    <div class="chart-card-header">
+                                        <h3>Overspeed Event Analysis</h3>
+                                        <p>Drivers with High Overspeed Counts</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- ==================== ADMIN TAB 11: LASE ANALYSIS (CORE INTELLIGENCE) ==================== -->
+                        <div id="tab-view-admin-lase-analysis" class="tab-pane" style="display: none;">
+                            <!-- Header Highlights Row -->
+                            <div class="lase-analysis-header-banner"
+                                style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
+                                <div class="lase-title-box">
+                                    <div class="lase-logo-icon"><i data-lucide="bar-chart-2"></i></div>
+                                    <div>
+                                        <h2 class="lase-main-heading">LASE Analysis</h2>
+                                        <p class="lase-sub-heading">Fleet Performance & Safety Intelligence Console</p>
+                                    </div>
+                                </div>
+
+                                <div class="date-filter-box"
+                                    style="display: flex; align-items: center; gap: 8px; background: var(--bg-card); border: 1px solid var(--border-color); padding: 8px 16px; border-radius: 14px; box-shadow: var(--shadow-sm);">
+                                    <i data-lucide="calendar"
+                                        style="width: 18px; height: 18px; color: var(--brand-primary);"></i>
+                                    <span
+                                        style="font-size: 0.88rem; font-weight: 700; color: var(--text-secondary);">Day-Wise
+                                        Filter:</span>
+                                    <select id="lase-dashboard-date-filter"
+                                        onchange="onLaseDashboardDateFilterChange(this.value)"
+                                        style="background: transparent; border: none; outline: none; color: var(--text-primary); font-weight: 700; font-size: 0.9rem; cursor: pointer;">
+                                        <option value="ALL">📅 All Operating Dates (Aug 01 - Aug 30, 2026)</option>
+                                        <!-- Dynamically populated 30 days -->
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- Fleet Vehicles Status KPI Cards -->
+                            <div class="kpi-cards-row margin-top-md">
+                                <div class="kpi-card gold-border">
+                                    <span class="kpi-title"><i data-lucide="truck"></i> Total Fleet Uptime</span>
+                                    <div class="kpi-value text-emerald" id="lase-v-uptime-pct">96.0%</div>
+                                    <span class="kpi-subtext" id="lase-v-status-counts">48 Active / 2 In Garage</span>
+                                </div>
+                                <div class="kpi-card rose-border">
+                                    <span class="kpi-title"><i data-lucide="shield-alert"></i> Driver Safety
+                                        Summary</span>
+                                    <div class="kpi-value text-rose" id="lase-top-violator-name">24 Safe / 3 High Risk
+                                    </div>
+                                    <span class="kpi-subtext" id="lase-top-violator-sub">50 Total Fleet Drivers</span>
+                                </div>
+                                <div class="kpi-card blue-border">
+                                    <span class="kpi-title"><i data-lucide="battery-charging"></i> Max Charging Time
+                                        Model</span>
+                                    <div class="kpi-value text-blue" id="lase-max-charge-model">Hyundai IONIQ 5</div>
+                                    <span class="kpi-subtext" id="lase-max-charge-sub">Capacity: 72.6 kWh</span>
+                                </div>
+                                <div class="kpi-card purple-border">
+                                    <span class="kpi-title"><i data-lucide="wrench"></i> Total Fleet Maintenance</span>
+                                    <div class="kpi-value text-purple" id="lase-top-brand-maint">₹495,200</div>
+                                    <span class="kpi-subtext" id="lase-top-brand-maint-sub">Top Brand: Tata
+                                        Motors</span>
+                                </div>
+                            </div>
+
+                            <!-- 1. Driver Safety & Risk Classification Table -->
+                            <div class="panel-card margin-top-lg">
+                                <div class="panel-header-action">
+                                    <div class="panel-header-title">
+                                        <i data-lucide="shield-check" class="text-emerald"></i>
+                                        <span>Driver Safety & Risk Classification</span>
+                                    </div>
+                                    <span class="badge-hint"><i data-lucide="mouse-pointer"></i> Touch any driver row
+                                        for complete profile</span>
+                                </div>
+                                <div class="table-responsive">
+                                    <table class="data-table interactive-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Driver ID</th>
+                                                <th>Driver Name</th>
+                                                <th>Assigned Vehicle</th>
+                                                <th>Driving Behavior</th>
+                                                <th>Safety Score</th>
+                                                <th>Driver Rating</th>
+                                                <th>Overspeed</th>
+                                                <th>Harsh Braking</th>
+                                                <th>Rapid Accel</th>
+                                                <th>Total Violations</th>
+                                                <th>Risk Status</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="lase-drivers-violations-body">
+                                            <tr>
+                                                <td colspan="11" class="text-center">Loading driver safety analysis...
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <!-- 2. Revenue Based on Driver -->
+                            <div class="panel-card margin-top-lg">
+                                <div class="panel-header-action">
+                                    <div class="panel-header-title">
+                                        <i data-lucide="dollar-sign" class="text-emerald"></i>
+                                        <span>Revenue & Earnings Based on Driver</span>
+                                    </div>
+                                    <span class="badge-hint"><i data-lucide="mouse-pointer"></i> Click driver for
+                                        financial & earnings breakdown</span>
+                                </div>
+                                <div class="table-responsive">
+                                    <table class="data-table interactive-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Driver ID</th>
+                                                <th>Driver Name</th>
+                                                <th>Total Trips</th>
+                                                <th>Total Distance (km)</th>
+                                                <th>Gross Revenue (₹)</th>
+                                                <th>Net Revenue (₹)</th>
+                                                <th>Driver Salary (₹)</th>
+                                                <th>Commission (₹)</th>
+                                                <th>Trip Profit (₹)</th>
+                                                <th>Profit Margin</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="lase-drivers-revenue-body">
+                                            <tr>
+                                                <td colspan="10" class="text-center">Loading driver revenue matrix...
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <!-- 3. Charging Expenses & Max Charging Time Analysis -->
+                            <div class="panel-card margin-top-lg">
+                                <div class="panel-header-action">
+                                    <div class="panel-header-title">
+                                        <i data-lucide="zap" class="text-cyan"></i>
+                                        <span>Charging Expense & Battery Charging Analysis (Car-Wise &
+                                            Brand-Wise)</span>
+                                    </div>
+                                    <div class="live-pill bg-glass-cyan"><i data-lucide="battery-charging"></i> Charging
+                                        Time & Cost Intelligence</div>
+                                </div>
+                                <div class="charging-highlight-box margin-bottom-md">
+                                    <div class="chg-box-left">
+                                        <i data-lucide="clock" class="chg-icon-lg"></i>
+                                        <div>
+                                            <span class="chg-box-label">CAR REQUIRING MAXIMUM CHARGING TIME</span>
+                                            <h3 class="chg-box-val" id="chg-max-car-title">Hyundai IONIQ 5 (72.6 kWh)
+                                            </h3>
+                                            <p class="chg-box-sub" id="chg-max-car-desc">Standard Full Charge: ~605
+                                                minutes (10.1 hrs) | Fast Charge (150 kW): ~88 minutes</p>
+                                        </div>
+                                    </div>
+                                    <div class="chg-box-right text-right">
+                                        <span class="chg-box-label">TOTAL FLEET CHARGING EXPENSE</span>
+                                        <div class="chg-total-val" id="chg-fleet-total-val">₹0.00</div>
+                                    </div>
+                                </div>
+                                <div class="table-responsive">
+                                    <table class="data-table interactive-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Vehicle Model</th>
+                                                <th>Manufacturer</th>
+                                                <th>Battery Capacity (kWh)</th>
+                                                <th>Total Energy Charged (kWh)</th>
+                                                <th>Total Charging Cost (₹)</th>
+                                                <th>Total Charging Time</th>
+                                                <th>Est. Fast Charge</th>
+                                                <th>Est. Std Charge</th>
+                                                <th>Charging Speed Rating</th>
+                                                <th>Charging History</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="lase-charging-analysis-body">
+                                            <tr>
+                                                <td colspan="10" class="text-center">Loading charging expenses
+                                                    analysis...</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <!-- 4. Maintenance Expenses: Car-Wise & Brand-Wise -->
+                            <div class="dual-grid-row margin-top-lg">
+                                <!-- Brand-wise Maintenance & Charging -->
+                                <div class="panel-card">
+                                    <div class="panel-header-action">
+                                        <div class="panel-header-title"><i data-lucide="layers" class="text-purple"></i>
+                                            Brand-wise (OEM) Maintenance & Charging Expense</div>
+                                        <span class="badge-hint"><i data-lucide="info"></i> Manufacturer Fleet
+                                            Breakdown</span>
+                                    </div>
+                                    <div class="table-responsive">
+                                        <table class="data-table interactive-table">
+                                            <thead>
+                                                <tr>
+                                                    <th>Manufacturer / Brand</th>
+                                                    <th>EVs Count</th>
+                                                    <th>Gross Revenue (₹)</th>
+                                                    <th>Maintenance Expense (₹)</th>
+                                                    <th>Primary Maintenance Types</th>
+                                                    <th>Charging Cost (₹)</th>
+                                                    <th>Charging Time (Hrs)</th>
+                                                    <th>% Rev</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="lase-brand-maint-body">
+                                                <tr>
+                                                    <td colspan="8" class="text-center">Loading brand maintenance...
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+
+                                <!-- Car-wise Maintenance & Charging -->
+                                <div class="panel-card">
+                                    <div class="panel-header-action">
+                                        <div class="panel-header-title"><i data-lucide="wrench" class="text-amber"></i>
+                                            Car-wise Maintenance & Charging Details</div>
+                                        <span class="badge-hint"><i data-lucide="mouse-pointer"></i> Touch row for full
+                                            history</span>
+                                    </div>
+                                    <div class="table-responsive">
+                                        <table class="data-table interactive-table">
+                                            <thead>
+                                                <tr>
+                                                    <th>Vehicle ID</th>
+                                                    <th>Model & Brand</th>
+                                                    <th>Registration</th>
+                                                    <th>Maintenance Type</th>
+                                                    <th>Maintenance Cost (₹)</th>
+                                                    <th>Charging Time</th>
+                                                    <th>Charging Cost (₹)</th>
+                                                    <th>Status</th>
+                                                    <th>Full History</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="lase-car-maint-body">
+                                                <tr>
+                                                    <td colspan="9" class="text-center">Loading car maintenance...</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 5. Top 5 Car Models & Performance Ranking -->
+                            <div class="panel-card margin-top-lg">
+                                <div class="panel-header"><i data-lucide="award" class="text-gold"></i> Top 5 Car Models
+                                    & Performance Ranking</div>
+                                <div class="table-responsive">
+                                    <table class="data-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Rank</th>
+                                                <th>EV Model</th>
+                                                <th>Manufacturer</th>
+                                                <th>Gross Revenue (₹)</th>
+                                                <th>Net Profit (₹)</th>
+                                                <th>Efficiency (kWh/100km)</th>
+                                                <th>Profit Margin</th>
+                                                <th>Performance Score</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="lase-top-models-body">
+                                            <tr>
+                                                <td colspan="8" class="text-center">Loading top car models...</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <!-- 6. Trip Revenue Components Matrix -->
+                            <div class="panel-card margin-top-lg">
+                                <div class="panel-header"><i data-lucide="pie-chart" class="text-blue"></i> Trip Fare &
+                                    Revenue Component Analysis</div>
+                                <div class="fare-grid-cards margin-top-sm">
+                                    <div class="fare-card"><span class="label">Base Fare Collected</span><strong
+                                            id="fare-base-val">₹0</strong></div>
+                                    <div class="fare-card"><span class="label">Distance Fare</span><strong
+                                            id="fare-dist-val">₹0</strong></div>
+                                    <div class="fare-card"><span class="label">Time Fare</span><strong
+                                            id="fare-time-val">₹0</strong></div>
+                                    <div class="fare-card"><span class="label">Surge Revenue</span><strong
+                                            id="fare-surge-val">₹0</strong></div>
+                                    <div class="fare-card"><span class="label">Taxes Collected</span><strong
+                                            id="fare-tax-val">₹0</strong></div>
+                                    <div class="fare-card"><span class="label">Discounts Applied</span><strong
+                                            id="fare-disc-val">₹0</strong></div>
+                                    <div class="fare-card highlight-gold"><span class="label">Gross Fleet
+                                            Revenue</span><strong id="fare-gross-val">₹0</strong></div>
+                                    <div class="fare-card highlight-emerald"><span class="label">Fleet Net
+                                            Revenue</span><strong id="fare-net-val">₹0</strong></div>
+                                    <div class="fare-card highlight-purple"><span class="label">Fleet Trip
+                                            Profit</span><strong id="fare-prof-val">₹0</strong></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- ==================== ADMIN TAB 12: LASE ASSISTANCE (AI ASSISTANT) ==================== -->
+                        <div id="tab-view-admin-lase-assistant" class="tab-pane" style="display: none;">
+                            <div class="assistant-wrapper">
+                                <!-- Header Banner -->
+                                <div class="assistant-header-banner">
+                                    <div class="assistant-title-box">
+                                        <div class="assistant-bot-avatar"><i data-lucide="bot"></i></div>
+                                        <div>
+                                            <h2 class="assistant-main-heading">LASE ASSISTANCE</h2>
+                                            <p class="assistant-sub-heading">Dedicated EV Fleet Intelligence Assistant
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div class="assistant-status-pill"><span class="dot-green"></span> Dataset Active
+                                    </div>
+                                </div>
+
+                                <!-- Chat History Box -->
+                                <div class="assistant-chat-box margin-top-md" id="lase-chat-box">
+                                    <div class="chat-message bot-message">
+                                        <div class="chat-avatar bot-avatar"><i data-lucide="bot"></i></div>
+                                        <div class="chat-content">
+                                            <div class="chat-author">LASE ASSISTANCE</div>
+                                            <div class="chat-text">
+                                                Hello Administrator! I am <strong>LASE ASSISTANCE</strong>, your
+                                                dedicated EV Fleet Assistant. Ask me any factual question about
+                                                vehicles, drivers, maintenance, revenue, or charging stats in your
+                                                fleet.
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Chat Input Box -->
+                                <div class="assistant-input-panel margin-top-md">
+                                    <form id="lase-chat-form" onsubmit="handleChatSubmit(event)" class="chat-form-box">
+                                        <input type="text" id="lase-chat-input"
+                                            placeholder="Type your fleet question (e.g. 'How many cars in my company?')..."
+                                            autocomplete="off" />
+                                        <button type="submit" id="lase-chat-send-btn" class="chat-send-btn">
+                                            <i data-lucide="send"></i> Send
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- ==================== DRIVER TAB 1: PROFILE ==================== -->
+                        <div id="tab-view-driver-profile" class="tab-pane" style="display: none;">
+                            <div class="profile-card-grid">
+                                <div class="driver-info-panel">
+                                    <div class="driver-avatar-box">
+                                        <div class="driver-avatar-lg" id="driver-prof-avatar">A</div>
+                                        <div class="driver-name-tag">
+                                            <h2 id="driver-prof-name">Aarav Sharma</h2>
+                                            <span class="driver-id-badge" id="driver-prof-id">Driver ID: D001</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="driver-details-list">
+                                        <div class="detail-row">
+                                            <span>Email Address:</span>
+                                            <strong id="driver-prof-email">driver1@gmail.com</strong>
+                                        </div>
+                                        <div class="detail-row">
+                                            <span>Driving Experience:</span>
+                                            <strong id="driver-prof-exp">16 Years</strong>
+                                        </div>
+                                        <div class="detail-row">
+                                            <span>Driving Behavior:</span>
+                                            <strong id="driver-prof-behavior" class="text-emerald">Normal</strong>
+                                        </div>
+                                        <div class="detail-row">
+                                            <span>Driver Rating:</span>
+                                            <strong id="driver-prof-rating" class="text-amber">4.4 / 5.0 ★</strong>
+                                        </div>
+                                        <div class="detail-row">
+                                            <span>Driver Score:</span>
+                                            <strong id="driver-prof-score">87.4 / 100</strong>
+                                        </div>
+                                        <div class="detail-row">
+                                            <span>Assigned Vehicle:</span>
+                                            <strong id="driver-prof-assigned-veh">EV001 (TN01EV00001)</strong>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="driver-safety-events-panel">
+                                    <h3>Driving Behavior & Safety Events Summary</h3>
+                                    <div class="safety-stat-row">
+                                        <div class="safety-stat-box">
+                                            <span class="s-label">Overspeed Events</span>
+                                            <span class="s-val text-amber" id="driver-prof-overspeed">208</span>
+                                        </div>
+                                        <div class="safety-stat-box">
+                                            <span class="s-label">Harsh Braking</span>
+                                            <span class="s-val text-rose" id="driver-prof-harsh">438</span>
+                                        </div>
+                                        <div class="safety-stat-box">
+                                            <span class="s-label">Rapid Acceleration</span>
+                                            <span class="s-val text-blue" id="driver-prof-rapid">417</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- ==================== DRIVER TAB 2: MY VEHICLE ==================== -->
+                        <div id="tab-view-driver-vehicle" class="tab-pane" style="display: none;">
+                            <div class="vehicle-details-container">
+                                <div class="panel-card">
+                                    <div class="panel-header"><i data-lucide="truck"></i> Assigned Electric Vehicle
+                                        Details</div>
+                                    <div class="specs-grid">
+                                        <div class="spec-item"><span class="label">Vehicle ID</span><strong
+                                                id="drv-v-id">EV001</strong></div>
+                                        <div class="spec-item"><span class="label">Manufacturer</span><strong
+                                                id="drv-v-mfr">Tata</strong></div>
+                                        <div class="spec-item"><span class="label">Model Name</span><strong
+                                                id="drv-v-model">Tiago EV</strong></div>
+                                        <div class="spec-item"><span class="label">Vehicle Type</span><strong
+                                                id="drv-v-type">Hatchback</strong></div>
+                                        <div class="spec-item"><span class="label">Registration Number</span><strong
+                                                id="drv-v-reg">TN01EV00001</strong></div>
+                                        <div class="spec-item"><span class="label">Charging Status</span><strong
+                                                id="drv-v-chg-status">Not Charging</strong></div>
+                                        <div class="spec-item"><span class="label">Current Speed</span><strong
+                                                id="drv-v-speed">96.1 km/h</strong></div>
+                                        <div class="spec-item"><span class="label">Garage Status</span><strong
+                                                id="drv-v-garage">No (Operational)</strong></div>
+                                        <div class="spec-item"><span class="label">Garage Reason</span><strong
+                                                id="drv-v-garage-reason">None (Vehicle Operational)</strong></div>
+                                        <div class="spec-item"><span class="label">Last Maintenance</span><strong
+                                                id="drv-v-last-maint">2026-08-01</strong></div>
+                                        <div class="spec-item"><span class="label">Next Maintenance</span><strong
+                                                id="drv-v-next-maint">2026-09-15</strong></div>
+                                    </div>
+                                </div>
+
+                                <!-- EV Range Prediction Card (ML Powered) -->
+                                <div class="panel-card predict-range-card" style="margin-top: 24px;">
+                                    <div class="panel-header-action">
+                                        <div class="panel-title-text text-emerald" style="font-size: 1.25rem;">
+                                            <i data-lucide="zap"></i> EV Range Prediction (ML Powered)
+                                        </div>
+                                        <div class="live-pill bg-glass-emerald"><span class="dot-white"></span>
+                                            Machine
+                                            Learning Active</div>
+                                    </div>
+                                    <p style="color: var(--text-muted); font-size: 0.88rem; margin-bottom: 20px;">
+                                        Predict remaining driving range using your assigned vehicle's real
+                                        telematics
+                                        and machine learning model (<code>ev_range_model.pkl</code>).
+                                    </p>
+
+                                    <!-- Auto-Loaded Vehicle Specs Panel -->
+                                    <div class="auto-specs-banner"
+                                        style="background: var(--bg-card-subtle); border: 1px solid var(--border-color); border-radius: 12px; padding: 16px; margin-bottom: 20px;">
+                                        <span
+                                            style="font-size: 0.75rem; font-weight: 800; color: var(--brand-primary); text-transform: uppercase; letter-spacing: 0.8px;">Auto-Loaded
+                                            Vehicle Parameters</span>
+                                        <div class="specs-grid"
+                                            style="grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; margin-top: 10px;">
+                                            <div class="spec-item"><span class="label">Vehicle</span><strong
+                                                    id="pred-spec-model">Tiago EV (Tata)</strong></div>
+                                            <div class="spec-item"><span class="label">Battery
+                                                    Capacity</span><strong id="pred-spec-capacity">24 kWh</strong>
+                                            </div>
+                                            <div class="spec-item"><span class="label">Claimed Range</span><strong
+                                                    id="pred-spec-claimed">285 km</strong></div>
+                                            <div class="spec-item"><span class="label">Motor Power</span><strong
+                                                    id="pred-spec-power">55 kW</strong></div>
+                                            <div class="spec-item"><span class="label">Vehicle Weight</span><strong
+                                                    id="pred-spec-weight">1580 kg</strong></div>
+                                            <div class="spec-item"><span class="label">Total Torque</span><strong
+                                                    id="pred-spec-torque">114 Nm</strong></div>
+                                            <div class="spec-item"><span class="label">Battery Temp</span><strong
+                                                    id="pred-spec-temp">41.3 °C</strong></div>
+                                            <div class="spec-item"><span class="label">Acceleration
+                                                    0-100</span><strong id="pred-spec-accel">11.2 s</strong></div>
+                                            <div class="spec-item"><span class="label">Cargo Volume</span><strong
+                                                    id="pred-spec-cargo">240 L</strong></div>
+                                        </div>
+                                    </div>
+
+                                    <!-- 3 User Inputs & Predict Action Grid -->
+                                    <div class="prediction-inputs-grid"
+                                        style="display: grid; grid-template-columns: 1.2fr 1fr 1fr 1fr; gap: 16px; align-items: flex-end; margin-bottom: 24px;">
+                                        <!-- Vehicle Model Selection (Auto-selected from logged in driver data / dataset) -->
+                                        <div class="input-group-box">
+                                            <label
+                                                style="font-size: 0.85rem; font-weight: 700; color: var(--text-primary); display: flex; align-items: center; gap: 6px; margin-bottom: 8px;">
+                                                <i data-lucide="car"
+                                                    style="color: var(--brand-primary); width: 18px; height: 18px;"></i>
+                                                Vehicle (Manufacturer & Model):
+                                            </label>
+                                            <select id="predict-vehicle-select" class="select-box"
+                                                style="width: 100%; padding: 10px 14px; border-radius: 8px;"
+                                                onchange="onPredictVehicleChange()">
+                                                <optgroup label="Tata Motors">
+                                                    <option value="Tata|Tiago EV" selected>Tata - Tiago EV</option>
+                                                    <option value="Tata|Punch EV">Tata - Punch EV</option>
+                                                    <option value="Tata|Nexon EV">Tata - Nexon EV</option>
+                                                </optgroup>
+                                                <optgroup label="Mahindra">
+                                                    <option value="Mahindra|XUV400 EV">Mahindra - XUV400 EV</option>
+                                                    <option value="Mahindra|BE 6e">Mahindra - BE 6e</option>
+                                                    <option value="Mahindra|XEV 9e">Mahindra - XEV 9e</option>
+                                                </optgroup>
+                                                <optgroup label="MG Motor">
+                                                    <option value="MG|Comet EV">MG - Comet EV</option>
+                                                    <option value="MG|Windsor EV">MG - Windsor EV</option>
+                                                    <option value="MG|ZS EV">MG - ZS EV</option>
+                                                </optgroup>
+                                                <optgroup label="Hyundai">
+                                                    <option value="Hyundai|Kona Electric">Hyundai - Kona Electric
+                                                    </option>
+                                                    <option value="Hyundai|Creta EV">Hyundai - Creta EV</option>
+                                                    <option value="Hyundai|Ioniq 5">Hyundai - Ioniq 5</option>
+                                                </optgroup>
+                                                <optgroup label="Maruti Suzuki">
+                                                    <option value="Maruti Suzuki|e Vitara">Maruti Suzuki - e Vitara
+                                                    </option>
+                                                    <option value="Maruti Suzuki|eWX">Maruti Suzuki - eWX</option>
+                                                    <option value="Maruti Suzuki|Fronx EV">Maruti Suzuki - Fronx EV
+                                                    </option>
+                                                </optgroup>
+                                            </select>
+                                        </div>
+
+                                        <!-- Input 1: Battery Percentage -->
+                                        <div class="input-group-box">
+                                            <label
+                                                style="font-size: 0.85rem; font-weight: 700; color: var(--text-primary); display: flex; align-items: center; gap: 6px; margin-bottom: 8px;">
+                                                <i data-lucide="battery-charging"
+                                                    style="color: var(--brand-emerald); width: 18px; height: 18px;"></i>
+                                                Battery %: <span id="predict-battery-val-text"
+                                                    style="color: var(--brand-emerald); font-weight: 800;">75%</span>
+                                            </label>
+                                            <input type="range" id="predict-battery-pct" min="1" max="100" value="75"
+                                                style="width: 100%; accent-color: var(--brand-emerald); cursor: pointer;"
+                                                oninput="document.getElementById('predict-battery-val-text').innerText = this.value + '%'; document.getElementById('predict-battery-num').value = this.value;">
+                                            <input type="number" id="predict-battery-num" min="1" max="100" value="75"
+                                                style="margin-top: 6px; width: 100%; padding: 8px 14px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-card-subtle); color: var(--text-primary); font-weight: 700;"
+                                                oninput="document.getElementById('predict-battery-pct').value = this.value; document.getElementById('predict-battery-val-text').innerText = this.value + '%';">
+                                        </div>
+
+                                        <!-- Input 2: Road Type -->
+                                        <div class="input-group-box">
+                                            <label
+                                                style="font-size: 0.85rem; font-weight: 700; color: var(--text-primary); display: flex; align-items: center; gap: 6px; margin-bottom: 8px;">
+                                                <i data-lucide="map-pin"
+                                                    style="color: var(--brand-primary); width: 18px; height: 18px;"></i>
+                                                Road Type:
+                                            </label>
+                                            <select id="predict-road-type" class="select-box"
+                                                style="width: 100%; padding: 10px 14px; border-radius: 8px;">
+                                                <option value="City" selected>Highway Driving</option>
+                                                <option value="Highway">City Driving</option>
+                                            </select>
+                                        </div>
+
+                                        <!-- Action Button -->
+                                        <div>
+                                            <button id="btn-predict-range" class="btn-get-started"
+                                                style="width: 100%; justify-content: center; margin-top: 0; padding: 12px 20px;"
+                                                onclick="runEVRangePrediction()">
+                                                <i data-lucide="zap" id="predict-btn-icon"></i>
+                                                <span id="predict-btn-text">Predict Range</span>
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <!-- Animated Prediction Result Display Box -->
+                                    <div id="prediction-result-panel" class="prediction-result-box"
+                                        style="display: none; background: linear-gradient(135deg, rgba(2, 132, 199, 0.08), rgba(16, 185, 129, 0.12)); border: 1.5px solid var(--brand-emerald); border-radius: 16px; padding: 24px; text-align: center; animation: fadeInUpPane 0.4s ease-out;">
+                                        <div
+                                            style="display: flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 8px;">
+                                            <i data-lucide="battery-charging"
+                                                style="color: var(--brand-emerald); width: 28px; height: 28px;"></i>
+                                            <span
+                                                style="font-size: 0.9rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; color: var(--text-secondary);">Estimated
+                                                Real-World Range</span>
+                                        </div>
+
+                                        <div style="font-size: 3.5rem; font-weight: 900; color: var(--brand-emerald); margin: 6px 0; letter-spacing: -1px;"
+                                            id="predict-output-km">
+                                            0.0 <span style="font-size: 1.5rem; font-weight: 700;">km</span>
+                                        </div>
+
+                                        <div
+                                            style="display: flex; align-items: center; justify-content: center; gap: 14px; flex-wrap: wrap; margin-top: 14px;">
+                                            <span class="status-badge status-ok" id="res-badge-model">Model: Nexon
+                                                EV</span>
+                                            <span class="status-badge status-info" id="res-badge-battery">Battery:
+                                                85%</span>
+                                            <span class="status-badge status-warn" id="res-badge-road">Road: City
+                                                Driving</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- ==================== DRIVER TAB: ML RANGE PREDICTOR ==================== -->
+                        <div id="tab-view-driver-predict" class="tab-pane" style="display: none;">
+                            <div class="panel-card predict-range-card">
+                                <div class="panel-header-action">
+                                    <div class="panel-title-text text-emerald" style="font-size: 1.25rem;">
+                                        <i data-lucide="zap"></i> Range Prediction (ML Powered)
+                                    </div>
+                                    <div class="live-pill bg-glass-emerald"><span class="dot-white"></span> Machine
+                                        Learning Active</div>
+                                </div>
+                                <p style="color: var(--text-muted); font-size: 0.88rem; margin-bottom: 20px;">
+                                    Predict remaining driving range using machine learning model
+                                    (<code>ev_range_model.pkl</code>). Vehicle parameters are automatically assigned
+                                    from your profile.
+                                </p>
+
+                                <!-- Assigned Vehicle Info Pill -->
+                                <div
+                                    style="background: var(--bg-card-subtle); border: 1px solid var(--border-color); border-radius: 12px; padding: 14px 18px; margin-bottom: 24px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
+                                    <div style="display: flex; align-items: center; gap: 10px;">
+                                        <i data-lucide="car"
+                                            style="color: var(--brand-primary); width: 22px; height: 22px;"></i>
+                                        <span
+                                            style="font-size: 0.9rem; font-weight: 700; color: var(--text-primary);">Assigned
+                                            Vehicle:</span>
+                                        <span id="standalone-assigned-veh-badge" class="status-badge status-ok"
+                                            style="font-size: 0.85rem; font-weight: 800;">Tata Tiago EV</span>
+                                    </div>
+                                    <span
+                                        style="font-size: 0.8rem; color: var(--text-muted); font-weight: 600;">(Auto-Selected
+                                        Driver Vehicle)</span>
+                                </div>
+
+                                <!-- 2 User Inputs & Predict Action Grid -->
+                                <div class="prediction-inputs-grid"
+                                    style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; align-items: flex-end; margin-bottom: 24px;">
+                                    <!-- Input 1: Battery Percentage -->
+                                    <div class="input-group-box">
+                                        <label
+                                            style="font-size: 0.85rem; font-weight: 700; color: var(--text-primary); display: flex; align-items: center; gap: 6px; margin-bottom: 8px;">
+                                            <i data-lucide="battery-charging"
+                                                style="color: var(--brand-emerald); width: 18px; height: 18px;"></i>
+                                            Battery %: <span id="standalone-predict-battery-val-text"
+                                                style="color: var(--brand-emerald); font-weight: 800;">75%</span>
+                                        </label>
+                                        <input type="range" id="standalone-predict-battery-pct" min="1" max="100"
+                                            value="75"
+                                            style="width: 100%; accent-color: var(--brand-emerald); cursor: pointer;"
+                                            oninput="document.getElementById('standalone-predict-battery-val-text').innerText = this.value + '%'; document.getElementById('standalone-predict-battery-num').value = this.value;">
+                                        <input type="number" id="standalone-predict-battery-num" min="1" max="100"
+                                            value="75"
+                                            style="margin-top: 6px; width: 100%; padding: 8px 14px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-card-subtle); color: var(--text-primary); font-weight: 700;"
+                                            oninput="document.getElementById('standalone-predict-battery-pct').value = this.value; document.getElementById('standalone-predict-battery-val-text').innerText = this.value + '%';">
+                                    </div>
+
+                                    <!-- Input 2: Road Type -->
+                                    <div class="input-group-box">
+                                        <label
+                                            style="font-size: 0.85rem; font-weight: 700; color: var(--text-primary); display: flex; align-items: center; gap: 6px; margin-bottom: 8px;">
+                                            <i data-lucide="map-pin"
+                                                style="color: var(--brand-primary); width: 18px; height: 18px;"></i>
+                                            Road Type:
+                                        </label>
+                                        <select id="standalone-predict-road-type" class="select-box"
+                                            style="width: 100%; padding: 10px 14px; border-radius: 8px;">
+                                            <option value="Highway" selected>City Driving</option>
+                                            <option value="City">Highway Driving</option>
+                                        </select>
+                                    </div>
+
+                                    <!-- Action Button -->
+                                    <div>
+                                        <button id="btn-standalone-predict-range" class="btn-get-started"
+                                            style="width: 100%; justify-content: center; margin-top: 0; padding: 12px 20px;"
+                                            onclick="runStandaloneEVRangePrediction()">
+                                            <i data-lucide="zap" id="standalone-predict-btn-icon"></i>
+                                            <span id="standalone-predict-btn-text">Predict Range</span>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <!-- Animated Prediction Result Display Box -->
+                                <div id="standalone-prediction-result-panel" class="prediction-result-box"
+                                    style="display: none; background: linear-gradient(135deg, rgba(2, 132, 199, 0.08), rgba(16, 185, 129, 0.12)); border: 1.5px solid var(--brand-emerald); border-radius: 16px; padding: 24px; text-align: center; animation: fadeInUpPane 0.4s ease-out;">
+                                    <div
+                                        style="display: flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 8px;">
+                                        <i data-lucide="battery-charging"
+                                            style="color: var(--brand-emerald); width: 28px; height: 28px;"></i>
+                                        <span
+                                            style="font-size: 0.9rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; color: var(--text-secondary);">Estimated
+                                            Real-World Range</span>
+                                    </div>
+
+                                    <div style="font-size: 3.5rem; font-weight: 900; color: var(--brand-emerald); margin: 6px 0; letter-spacing: -1px;"
+                                        id="standalone-predict-output-km">
+                                        0.0 <span style="font-size: 1.5rem; font-weight: 700;">km</span>
+                                    </div>
+
+                                    <div
+                                        style="display: flex; align-items: center; justify-content: center; gap: 14px; flex-wrap: wrap; margin-top: 14px;">
+                                        <span class="status-badge status-ok" id="standalone-res-badge-model">Model:
+                                            Nexon EV</span>
+                                        <span class="status-badge status-info"
+                                            id="standalone-res-badge-battery">Battery: 75%</span>
+                                        <span class="status-badge status-warn" id="standalone-res-badge-road">Road:
+                                            Highway Driving</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- ==================== DRIVER TAB 3: MY TRIPS ==================== -->
+                        <div id="tab-view-driver-trips" class="tab-pane" style="display: none;">
+                            <div class="panel-card">
+                                <div class="panel-header-action">
+                                    <div class="panel-title-text"><i data-lucide="navigation"></i> My Trip Status &
+                                        Log
+                                    </div>
+                                    <div class="table-search-box">
+                                        <i data-lucide="search" class="search-icon"></i>
+                                        <input type="text" id="driver-trips-search"
+                                            placeholder="Search trip ID, status..."
+                                            onkeyup="filterTable('driver-trips-search', 'driver-trips-table-body')">
+                                    </div>
+                                </div>
+                                <div class="table-responsive">
+                                    <table class="data-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Trip ID</th>
+                                                <th>Trip Date</th>
+                                                <th>Duration (Min)</th>
+                                                <th>Distance (km)</th>
+                                                <th>Speed (km/h)</th>
+                                                <th>Status</th>
+                                                <th>Trip Net Profit (₹)</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="driver-trips-table-body">
+                                            <tr>
+                                                <td colspan="7" class="text-center">Loading trip history...</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+
+
+                        <!-- ==================== DRIVER TAB 5: MAINTENANCE ==================== -->
+                        <div id="tab-view-driver-maint" class="tab-pane" style="display: none;">
+                            <div class="panel-card">
+                                <div class="panel-header"><i data-lucide="wrench"></i> My Vehicle Maintenance
+                                    Details
+                                </div>
+                                <div class="specs-grid">
+                                    <div class="spec-item"><span class="label">Vehicle ID</span><strong
+                                            id="drv-m-id">EV00001</strong></div>
+                                    <div class="spec-item"><span class="label">In Garage Status</span><strong
+                                            id="drv-m-garage">No</strong></div>
+                                    <div class="spec-item"><span class="label">Maintenance Type</span><strong
+                                            id="drv-m-type">Routine Inspection</strong></div>
+                                    <div class="spec-item"><span class="label">Maintenance Status</span><strong
+                                            id="drv-m-status">Completed</strong></div>
+                                    <div class="spec-item"><span class="label">Total Maintenance Cost</span><strong
+                                            id="drv-m-cost">₹10,500</strong></div>
+                                    <div class="spec-item"><span class="label">Last Maintenance Date</span><strong
+                                            id="drv-m-last">2026-08-01</strong></div>
+                                    <div class="spec-item"><span class="label">Next Maintenance Date</span><strong
+                                            id="drv-m-next">2026-09-15</strong></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- ==================== DRIVER TAB 6: MY EARNINGS ==================== -->
+                        <div id="tab-view-driver-revenue" class="tab-pane" style="display: none;">
+                            <div class="kpi-cards-row">
+                                <div class="kpi-card">
+                                    <span class="kpi-title">Daily Revenue</span>
+                                    <div class="kpi-value text-emerald" id="drv-rev-daily">₹2,850</div>
+                                    <span class="kpi-subtext">Average per day</span>
+                                </div>
+                                <div class="kpi-card">
+                                    <span class="kpi-title">Monthly Revenue</span>
+                                    <div class="kpi-value text-blue" id="drv-rev-monthly">₹85,500</div>
+                                    <span class="kpi-subtext">Estimated monthly</span>
+                                </div>
+                                <div class="kpi-card">
+                                    <span class="kpi-title">Gross Revenue</span>
+                                    <div class="kpi-value text-purple" id="drv-rev-gross">₹310,400</div>
+                                    <span class="kpi-subtext">Total fare collected</span>
+                                </div>
+                                <div class="kpi-card">
+                                    <span class="kpi-title">Net Earnings</span>
+                                    <div class="kpi-value text-cyan" id="drv-rev-net">₹248,320</div>
+                                    <span class="kpi-subtext">Driver payout</span>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- 5. Popup Auth Modal (Login / Sign Up) -->
+    <div class="modal-overlay" id="auth-modal" onclick="closeModalOnBackdrop(event)">
+        <div class="modal-card modal-animate">
+            <button class="modal-close" onclick="closeModal()">&times;</button>
+
+            <div class="modal-banner">
+                <div class="banner-title" id="modal-banner-title">LASE EV</div>
+                <div class="banner-sub" id="modal-banner-sub">Connected Intelligence for EV</div>
+                <div class="banner-desc" id="modal-banner-desc">
+                    One platform for smart driving and complete fleet control. Track real-time data, optimize energy,
+                    and elevate every journey.
+                </div>
+            </div>
+
+            <div class="modal-form-area">
+                <!-- Sign Up Form -->
+                <form id="modal-signup" style="display: none;" onsubmit="handleSignup(event)">
+                    <h3 class="form-heading">CREATE ACCOUNT</h3>
+
+                    <div class="input-box">
+                        <i data-lucide="user" class="field-icon"></i>
+                        <input type="text" id="reg-name" placeholder="Full Name" autocomplete="off" required>
+                    </div>
+
+                    <div class="input-box">
+                        <i data-lucide="mail" class="field-icon"></i>
+                        <input type="text" id="reg-email" placeholder="Email Address" autocomplete="off" required>
+                    </div>
+
+                    <div class="input-box password-box">
+                        <i data-lucide="lock" class="field-icon"></i>
+                        <input type="password" id="reg-password" placeholder="Password" required>
+                        <button type="button" class="eye-toggle"
+                            onclick="togglePasswordVisibility('reg-password', this)">
+                            <i data-lucide="eye"></i>
+                        </button>
+                    </div>
+
+                    <div class="input-box">
+                        <i data-lucide="shield" class="field-icon"></i>
+                        <select id="reg-role" onchange="updateModalBanner(this.value)" required>
+                            <option value="driver" selected>Driver Account</option>
+                            <option value="admin">Admin Account</option>
+                        </select>
+                    </div>
+
+                    <button type="submit" class="btn-modal-action glow-btn">SIGN UP</button>
+                    <div class="box-bottom-error" id="signup-error-box"></div>
+
+                    <div class="modal-bottom-switch">
+                        Already registered? <a onclick="switchModalTab('login')">Login</a>
+                    </div>
+                </form>
+
+                <!-- Login Form -->
+                <form id="modal-login" onsubmit="handleLogin(event)">
+                    <h3 class="form-heading">USER LOGIN</h3>
+
+                    <div class="input-box">
+                        <i data-lucide="mail" class="field-icon"></i>
+                        <input type="text" id="login-email" placeholder="Email Address" autocomplete="off" required>
+                    </div>
+
+                    <div class="input-box password-box">
+                        <i data-lucide="lock" class="field-icon"></i>
+                        <input type="password" id="login-password" placeholder="Password" required>
+                        <button type="button" class="eye-toggle"
+                            onclick="togglePasswordVisibility('login-password', this)">
+                            <i data-lucide="eye"></i>
+                        </button>
+                    </div>
+
+                    <div class="form-utility-row">
+                        <label class="remember-label">
+                            <input type="checkbox" id="login-remember"> Remember Me
+                        </label>
+                        <a href="javascript:void(0)" class="forgot-pass-link"
+                            onclick="alert('Password reset link sent to your email.')">Forgot password?</a>
+                    </div>
+
+                    <button type="submit" class="btn-modal-action glow-btn">LOGIN</button>
+                    <div class="box-bottom-error" id="login-error-box"></div>
+
+                    <div class="modal-bottom-switch">
+                        Don't have an account? <a onclick="switchModalTab('register')">Sign Up</a>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- 6. Vehicle / Driver Detail Modal -->
+    <div class="modal-overlay" id="detail-modal" onclick="if(event.target.id==='detail-modal') closeDetailModal()">
+        <div class="modal-card modal-animate detail-modal-card">
+            <button class="modal-close" onclick="closeDetailModal()">&times;</button>
+            <div id="detail-modal-body">
+                <!-- Dynamically populated -->
+            </div>
+        </div>
+    </div>
+
+    <!-- 7. Comprehensive Interactive Multi-Tab History Modal -->
+    <div class="modal-overlay" id="history-modal" onclick="if(event.target.id==='history-modal') closeHistoryModal()">
+        <div class="modal-card modal-animate history-modal-card">
+            <button class="modal-close" onclick="closeHistoryModal()">&times;</button>
+
+            <!-- Dynamic Header Banner -->
+            <div id="history-modal-header" class="history-modal-header">
+                <!-- Dynamically populated -->
+            </div>
+
+            <!-- Modal Tab Navigation Bar -->
+            <div class="history-tabs-bar">
+                <button class="history-tab-btn active" id="htab-btn-charging" onclick="switchHistoryTab('charging')">
+                    <i data-lucide="zap"></i> ⚡ Charging History
+                </button>
+                <button class="history-tab-btn" id="htab-btn-trips" onclick="switchHistoryTab('trips')">
+                    <i data-lucide="route"></i> 🚗 Trip History
+                </button>
+                <button class="history-tab-btn" id="htab-btn-maint" onclick="switchHistoryTab('maint')">
+                    <i data-lucide="wrench"></i> 🔧 Maintenance History
+                </button>
+                <button class="history-tab-btn" id="htab-btn-summary" onclick="switchHistoryTab('summary')">
+                    <i data-lucide="bar-chart-2"></i> 📊 Financials & Specs
+                </button>
+            </div>
+
+            <!-- Toolbar Search & Export -->
+            <div class="history-modal-toolbar">
+                <div style="display: flex; align-items: center; gap: 12px; flex: 1; flex-wrap: wrap;">
+                    <div class="date-filter-box"
+                        style="display: flex; align-items: center; gap: 6px; background: var(--bg-card-subtle); border: 1px solid var(--border-color); padding: 6px 14px; border-radius: 12px;">
+                        <i data-lucide="calendar" style="width: 16px; height: 16px; color: var(--brand-primary);"></i>
+                        <span style="font-size: 0.85rem; font-weight: 700; color: var(--text-secondary);">Date
+                            Filter:</span>
+                        <select id="history-date-select" onchange="onHistoryDateFilterChange(this.value)"
+                            style="background: transparent; border: none; outline: none; color: var(--text-primary); font-weight: 700; font-size: 0.88rem; cursor: pointer;">
+                            <option value="ALL">📅 All Operating Dates (Aug 2026)</option>
+                            <!-- Dynamically populated per driver -->
+                        </select>
+                    </div>
+
+                    <div class="table-search-box" style="flex: 1; max-width: 320px;">
+                        <i data-lucide="search" class="search-icon"></i>
+                        <input type="text" id="history-modal-search" placeholder="Search station, trip ID..."
+                            onkeyup="filterActiveHistoryTable()">
+                    </div>
+                </div>
+
+                <button class="btn-sm-action glow-btn" onclick="exportHistoryCSV()"
+                    style="padding: 8px 16px; display: flex; align-items: center; gap: 6px; white-space: nowrap;">
+                    <i data-lucide="download"></i> Export History CSV
+                </button>
+            </div>
+
+            <!-- History Content Panes -->
+            <div class="history-modal-body" id="history-modal-body">
+                <div id="history-pane-charging" class="history-pane" style="display: block;">
+                    <div id="charging-history-content"></div>
+                </div>
+
+                <div id="history-pane-trips" class="history-pane" style="display: none;">
+                    <div id="trip-history-content"></div>
+                </div>
+
+                <div id="history-pane-maint" class="history-pane" style="display: none;">
+                    <div id="maint-history-content"></div>
+                </div>
+
+                <div id="history-pane-summary" class="history-pane" style="display: none;">
+                    <div id="summary-history-content"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification Toast -->
+    <div id="bottom-page-toast">Action completed successfully</div>
+
+    <script src="/static/script.js"></script>
+</body>
+
+</html>
